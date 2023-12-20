@@ -1,0 +1,143 @@
+﻿@page
+@model dotnet_kp.Pages.IndexModel
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<style>
+    .product-card {
+        width: 400px;
+        height: 500px;
+        border: 1px solid #ccc;
+        margin: 10px;
+        padding: 10px;
+    }
+
+    .product-image {
+        width: 100%;
+        height: 60%;
+        object-fit: cover;
+        object-position: center;
+    }
+
+    .sidebar {
+        float: left;
+        width: 25%;
+        padding: 10px;
+    }
+
+    .content {
+        float: left;
+        width: 75%;
+    }
+
+    .category-label {
+        display: block;
+        margin-bottom: 10px;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        cursor: pointer;
+    }
+</style>
+
+<div>
+    <form method="post">
+        <div class="sidebar">
+            <h2>Категории товаров</h2>
+            <ul>
+                @if (Model.Categories.Count != 0)
+                {
+                    @foreach (var category in Model.Categories)
+                    {
+                        <li>
+                            <label class="category-label">
+                                <input type="radio" name="category" value="@category.Name"
+                                    onclick="setCategory('@category.Name')" @(Request.Query["category"] ==
+                            @category.Name.ToString() ? "checked" : "") /> @category.Name
+                            </label>
+                        </li>
+                    }
+                }
+                else
+                {
+
+                }
+            </ul>
+            <button type="submit" class="btn-primary">Показать товары</button>
+        </div>
+    </form>
+
+    <div class="content">
+        @if (Model.Products.Count != 0)
+        {
+            <h3>Товары</h3>
+            <div class="product-list">
+                @foreach (var product in Model.Products)
+                {
+                    <div class="product-card">
+                        <img class="product-image" src="@product.ImageUrl" alt="Product Image">
+                        <h4>@product.Name</h4>
+                        <p>@product.Description</p>
+                        <p>$@product.Price</p>
+                        <form id="addToCartForm-@product.ProductId" method="post" asp-page-handler="AddToCart">
+                            <input type="hidden" name="productId" value="@product.ProductId" />
+                            <button type="button" onclick="addToCart('@product.ProductId')" class="btn-primary">В
+                                корзину</button>
+                        </form>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <h3 class="text-center">Нет товаров</h3>
+        }
+    </div>
+</div>
+
+
+<div class="modal" data-bs-toggle="modal" id="myModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Ошибка</h4>
+                <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Ошибка при добавлении товара в корзину.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function setCategory(category) {
+        history.replaceState(null, '', '?category=' + category);
+    }
+
+    function addToCart(productId) {
+        var form = document.querySelector('#addToCartForm-' + productId);
+        var formData = new FormData(form);
+        let str = "/Index?handler=AddToCart&productId=" + productId;
+        fetch(str, {
+            method: 'POST',
+            body: formData,
+        })
+            .then(response => {
+                if (response.ok) {
+                    // Handle success
+                } else if (response.status === 403) {
+                    // Handle failure
+                    $('#myModal').modal('show');
+                }
+            });
+    }
+</script>

@@ -1,0 +1,48 @@
+﻿@page
+@model dotnet_kp.Pages.Register.RegisterModel
+
+@{
+    Layout = null;
+    ViewData["Title"] = "Регистрация";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>@ViewData["Title"] - Your Application Name</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
+</head>
+<body class="d-flex justify-content-center align-items-center vh-100">
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <h2 class="text-center" id="h2Enter">Регистрация</h2>
+            <form method="post" class="mt-4" id="register-form">
+                <div class="form-group">
+                    <label asp-for="User.UserName">Username</label>
+                    <input type="text" id="Username" asp-for="User.UserName" class="form-control" required/>
+                </div>
+                <div class="form-group">
+                    <label asp-for="User.Email">Email</label>
+                    <input type="email" id="Email" asp-for="User.Email" class="form-control" required/>
+                </div>
+                <div class="form-group">
+                    <label asp-for="User.Password">Пароль</label>
+                    <input type="password" id="Password" asp-for="User.Password" class="form-control" required/>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Зарегистрироваться</button>
+                <p class="text-center mt-2">Уже есть аккаунт? <a asp-page="/Login/Index" id="switch-to-register">Войти</a></p>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popperjs@1.16.0/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+
+</body>
+</html>

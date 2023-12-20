@@ -1,0 +1,141 @@
+﻿@page
+@model dotnet_kp.Pages.Admin.Users.UserModel
+
+@{
+    Layout = "Shared/_Layout";
+}
+
+<div class="col py-3">
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>User ID</th>
+            <th>User Name</th>
+            <th>Email</th>
+            <th>Password</th>
+            <th>Role</th>
+            <th>Actions</th>
+            <button class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#addCategoryModal">add user</button>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var user in Model.AllUsers)
+        {
+            <tr>
+                <td>@user.UserId</td>
+                <td>@user.UserName</td>
+                <td>@user.Email</td>
+                <td>@user.Password</td>
+                <td>@user.Role</td>
+                <td>
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editUserModal" data-user-id="@user.UserId">Edit</button>
+                        <form method="post" asp-page-handler="RemoveUser" asp-route-userId="@user.UserId">
+                            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
+
+
+<!-- Add User Modal -->
+<div class="modal fade" id="addCategoryModal" tabindex="-1" role="dialog" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addCategoryModalLabel">Add User</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="post" id="formAddUser">
+                    <div class="form-group">
+                        <label for="UserName">UserName</label>
+                        <input type="text" class="form-control" asp-for="UserInput.UserName" id="categoryName" placeholder="Enter user name">
+                    </div>
+                    <div class="form-group">
+                        <label for="UserEmail">User Email</label>
+                        <input type="email" required class="form-control" asp-for="UserInput.Email" id="categoryDescription" placeholder="Enter user email"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="UserPassword">User Password</label>
+                        <input type="password" required class="form-control" asp-for="UserInput.Password" id="categoryPassword" placeholder="Enter user password"/>
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="addUserButton">Add User</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Edit User Modal -->
+<div class="modal fade" id="editUserModal" tabindex="-1" role="dialog" aria-labelledby="editCategoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editUserModalLabel">Edit User</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="post" id="formEditUser" asp-page-handler="EditUser">
+                    <input type="hidden" asp-for="UserId" id="editUserId"/>
+                    <div class="form-group">
+                        <label for="editCategoryName">UserName</label>
+                        <input type="text" class="form-control" asp-for="UserInput.UserName" id="editUserName" placeholder="Enter user name">
+                    </div>
+                    <div class="form-group">
+                        <label for="editCategoryDescription">User Email</label>
+                        <input type="email" class="form-control" asp-for="UserInput.Email" id="editUserEmail" placeholder="Enter user email"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="editUserPassword">User Password</label>
+                        <input type="password" class="form-control" asp-for="UserInput.Password" id="editUserPassword" placeholder="Enter user password"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="editUserRole">User Role</label>
+                        <select class="form-control" asp-for="UserInput.Role" id="editUserRole">
+                            <option value="User">User</option>
+                            <option value="Admin">Admin</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="editUserButton">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script>
+        document.querySelectorAll('.btn-primary[data-bs-toggle="modal"]').forEach(function (button) {
+                button.addEventListener('click', function () {
+                    var userId = button.getAttribute('data-user-id');
+                    document.querySelector('#editUserId').value = userId;
+                    document.querySelector('#editUserModalLabel').textContent = 'Edit User - ID: ' + userId;
+                });
+            });
+        $('#addUserButton').click(function () {
+            $('#formAddUser').submit();
+        });
+        
+        $('#editUserButton').click(function () {
+           $('#formEditUser').submit();
+        });
+    </script>
+}

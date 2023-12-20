@@ -1,0 +1,125 @@
+﻿@page
+@model dotnet_kp.Pages.Admin.Categories.CategoryModel
+
+@{
+    Layout = "Shared/_Layout";
+    ViewData["Title"] = "Categories";
+}
+
+<div class="col py-3">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Category ID</th>
+                <th>Category Name</th>
+                <th>Category Description</th>
+                <th>Actions</th>
+                <button class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#addCategoryModal">add category</button>
+            </tr>
+        </thead>
+        <tbody>
+        @if (Model.AllCategories != null)
+        {
+            @foreach (var category in Model.AllCategories)
+            {
+                <tr>
+                    <td>@category.CategoryId</td>
+                    <td>@category.Name</td>
+                    <td>@category.Description</td>
+                    <td>
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editCategoryModal" data-category-id="@category.CategoryId">Edit</button>
+                            <form method="post" asp-page-handler="RemoveCategory" asp-route-categoryId="@category.CategoryId">
+                                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            }
+        }
+        </tbody>
+    </table>
+</div>
+
+
+<!-- Add Category Modal -->
+<div class="modal fade" id="addCategoryModal" tabindex="-1" role="dialog" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addCategoryModalLabel">Add Category</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="post" id="formAddCategory">
+                    <div class="form-group">
+                        <label for="categoryName">Category Name</label>
+                        <input type="text" class="form-control" asp-for="CategoryInput.Name" id="categoryName" placeholder="Enter category name">
+                    </div>
+                    <div class="form-group">
+                        <label for="categoryDescription">Category Description</label>
+                        <textarea class="form-control" asp-for="CategoryInput.Description" id="categoryDescription" placeholder="Enter category description"></textarea>
+                    </div>
+                    
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                 <button type="button" class="btn btn-primary" id="addCategoryButton">Add Category</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Edit Category Modal -->
+<div class="modal fade" id="editCategoryModal" tabindex="-1" role="dialog" aria-labelledby="editCategoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editCategoryModalLabel">Edit Category</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="post" id="formEditCategory" asp-page-handler="EditCategory">      
+                    <input type="hidden" asp-for="CategoryId" id="editCategoryId" />
+                    <div class="form-group">
+                        <label for="editCategoryName">Category Name</label>
+                        <input type="text" class="form-control" asp-for="CategoryInput.Name" id="editCategoryName" placeholder="Enter category name">
+                    </div>
+                    <div class="form-group">
+                        <label for="editCategoryDescription">Category Description</label>
+                        <textarea class="form-control" asp-for="CategoryInput.Description" id="editCategoryDescription" placeholder="Enter category description"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                 <button type="button" class="btn btn-primary" id="editCategoryButton">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll('.btn-primary[data-bs-toggle="modal"]').forEach(function (button) {
+        button.addEventListener('click', function () {
+            var categoryId = button.getAttribute('data-category-id');
+            document.querySelector('#editCategoryId').value = categoryId;
+            document.querySelector('#editCategoryModalLabel').textContent = 'Edit Category - ID: ' + categoryId;
+        });
+    });
+    document.querySelector('#addCategoryButton').addEventListener('click', function() {
+       document.querySelector('#formAddCategory').submit(); 
+    });
+    document.querySelector('#editCategoryButton').addEventListener('click', function() {
+        console.log("her");
+           document.querySelector('#formEditCategory').submit(); 
+        });
+</script>
+

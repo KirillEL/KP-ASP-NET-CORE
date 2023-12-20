@@ -1,0 +1,53 @@
+﻿@page
+@model dotnet_kp.Pages.Cart.CartModel
+
+@{
+    ViewData["Title"] = "Корзина";
+}
+
+<h2 style="padding-left: 10px">Мои товары</h2>
+
+<style>
+    .order-quantity-badge {
+        background-color: #007bff; /* Blue background color */
+        color: #fff; /* White text color */
+        border-radius: 50%; /* Create a circular shape */
+        padding: 5px 10px; /* Adjust padding to your preference */
+        font-weight: bold; /* Make the text bold */
+    }
+</style>
+
+@if (Model.Orders.Count > 0)
+{
+    <div class="d-flex align-items-center gap-lg-5">
+    @foreach (var order in Model.Orders)
+    {
+        @if (order.OrderItems.Any()) // Check if there are any OrderItems
+        {
+            var product = order.OrderItems.First().Product;
+            var orderCount = order.OrderItems.Count;
+            <div class="card-deck">
+                <div class="card" style="width: 20rem;">
+                    <img src="@product.ImageUrl" width="" height="300" class="card-img-top" alt="Product Image">
+                    <div class="card-body">
+                        <h5 class="card-title">@product.Name</h5>
+                        <p class="card-text">@product.Description</p>
+                        <p class="card-text">$@product.Price</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <form method="post" style="display: inline" asp-page-handler="DeleteProductFromCart">
+                                <input type="hidden" name="orderId" value="@order.OrderId"/>
+                                <button type="submit" class="btn btn-danger">Удалить из корзины</button>
+                            </form>
+                            <span class="badge order-quantity-badge">@orderCount</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    </div>
+}
+else
+{
+    <p style="color: red;">Ваша корзина пуста.</p>
+}

@@ -1,0 +1,37 @@
+﻿@page
+@model dotnet_kp.Pages.Admin.Orders.OrdersModel
+
+@{
+    Layout = "Shared/_Layout";
+    ViewData["Title"] = "Orders";
+}
+
+
+<div class="col py-3">
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Order ID</th>
+            <th>User</th>
+            <th>OrderDate</th>
+            <th>OrderItems</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var order in Model.AllOrders)
+        {
+            <tr>
+                <td>@order.OrderId</td>
+                <td>@order.User.UserName</td>
+                <td>@order.OrderDate</td>
+                <td>
+                    @foreach (var order_item in order.OrderItems)
+                    {
+                        <p>@order_item.Product.Name</p>
+                    }
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

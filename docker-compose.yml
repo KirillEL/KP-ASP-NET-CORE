@@ -1,0 +1,34 @@
+﻿version: "3.8"
+
+services:
+  shop:
+    build: .
+    container_name: "shop"
+    ports:
+      - "9999:2222"
+    depends_on:
+      - shop_db
+    networks:
+      - net
+
+  shop_db:
+    image: "postgres:latest"
+    container_name: shop_db
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - net
+
+volumes:
+  postgres_data: {}
+
+networks:
+  net:
+    driver: bridge

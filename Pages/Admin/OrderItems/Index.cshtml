@@ -1,0 +1,95 @@
+﻿@page
+@model dotnet_kp.Pages.Admin.OrderItems.OrderItemModel
+
+@{
+    Layout = "Shared/_Layout";
+    ViewData["Title"] = "OrderItems";
+}
+
+<div class="col py-3">
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>OrderItem ID</th>
+            <th>Product</th>
+            <th>Price</th>
+            <th>Order ID</th>
+            <button class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#addOrderItemModal">add orderItem</button>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var order_item in Model.AllOrderItems)
+        {
+            <tr>
+                <td>@order_item.OrderItemId</td>
+                <td>@order_item.Product.Name</td>
+                <td>@order_item.Price</td>
+                <td>@order_item.Order.OrderId</td>
+                <td>
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editOrderItemModal" data-orderItem-id="@order_item.OrderItemId">Edit</button>
+                        <form method="post" asp-page-handler="RemoveOrderItem" asp-route-orderItemId="@order_item.OrderItemId">
+                            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
+
+
+<!-- Add OrderItems Modal -->
+<div class="modal fade" id="addOrderItemModal" tabindex="-1" role="dialog" aria-labelledby="addOrderItemModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addOrderItemModalLabel">Add OrderItem</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="post" id="formAddOrderItem">
+                    <div class="form-group">
+                        <label for="orderItem">Products</label>
+                        <select class="form-control" asp-for="OrderItemInput.ProductId" id="orderItem">
+                            @foreach (var product in Model.AllProducts)
+                            {
+                                <option value="@product.ProductId">@product.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="orderItemPrice">OrderItem Price</label>
+                        <input type="number" class="form-control" asp-for="OrderItemInput.Price" id="orderItemPrice" placeholder="Enter orderItem price"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="orderItemUsers">Users</label>
+                        <select class="form-control" asp-for="OrderItemInput.UserId" id="orderItemUsers">
+                            @foreach (var user in Model.AllUsers)
+                            {
+                                <option value="@user.UserId">@user.UserName</option>
+                            }
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="addOrderItemButton">Add OrderItem</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script>
+        $('#addOrderItemButton').click(function() {
+            $('#formAddOrderItem').submit();
+        });
+    </script>
+}

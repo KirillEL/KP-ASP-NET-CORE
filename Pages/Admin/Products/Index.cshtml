@@ -1,0 +1,161 @@
+﻿@page
+@model dotnet_kp.Pages.Admin.Products.ProductModel
+
+@{
+    Layout = "Shared/_Layout";
+    ViewData["Title"] = "Products";
+}
+
+<div class="col py-3">
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Product ID</th>
+            <th>Product Name</th>
+            <th>Product Description</th>
+            <th>Product Price</th>
+            <th>Product ImageUrl</th>
+            <button class="btn btn-dark" id="addProductButton" data-bs-toggle="modal" data-bs-target="#addProductModal">Add Product</button>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var product in Model.AllProducts)
+        {
+            <tr>
+                <td>@product.ProductId</td>
+                <td>@product.Name</td>
+                <td>@product.Description</td>
+                <td>@product.Price</td>
+                <td>@product.ImageUrl</td>
+                <td>
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editProductModal" data-product-id="@product.ProductId">Edit</button>
+                        <form method="post" asp-page-handler="RemoveProduct" asp-route-productId="@product.ProductId">
+                            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
+
+
+<!-- Add Product Modal -->
+<div class="modal fade" id="addProductModal" tabindex="-1" role="dialog" aria-labelledby="addProductModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addProductModalLabel">Add Product</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="post" id="formAddProduct" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="productName">Product Name</label>
+                        <input type="text" class="form-control" asp-for="ProductInput.Name" id="productName" placeholder="Enter product name">
+                    </div>
+                    <div class="form-group">
+                        <label for="productDescription">Product Description</label>
+                        <input type="text" class="form-control" asp-for="ProductInput.Description" id="productDescription" placeholder="Enter product description"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="productPrice">Product Price</label>
+                        <input type="text" class="form-control" asp-for="ProductInput.Price" id="productPrice" placeholder="Enter product price"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="productImage">Product Image</label>
+                        <input type="file" class="form-control" asp-for="ProductInput.ImageFile" id="productImage" name="file" accept="image/*" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="productCategory">Product Category</label>
+                        <select class="form-control" asp-for="ProductInput.CategoryId" id="productCategory">
+                            @foreach (var category in Model.AllCategories)
+                            {
+                                <option value="@category.CategoryId">@category.Name</option>
+                            }
+                        </select>
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="addCategoryButton">Add Category</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Edit Product Modal -->
+<div class="modal fade" id="editProductModal" tabindex="-1" role="dialog" aria-labelledby="editCategoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editProductModalLabel">Edit Product</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="post" id="formEditProduct" asp-page-handler="EditProduct" enctype="multipart/form-data">
+                    <input type="hidden" asp-for="ProductId" id="editProductId"/>
+                    <div class="form-group">
+                        <label for="editProductName">Pruduct Name</label>
+                        <input type="text" class="form-control" asp-for="ProductInput.Name" id="editProductName" placeholder="Enter product name">
+                    </div>
+                    <div class="form-group">
+                        <label for="editProductDescription">Product Description</label>
+                        <input type="text" class="form-control" asp-for="ProductInput.Description" id="editProductDescription" placeholder="Enter product description"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="editProductPrice">Product Price</label>
+                        <input type="text" class="form-control" asp-for="ProductInput.Price" id="editProductPrice" placeholder="Enter product price"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="productImage">Product Image</label>
+                        <input type="file" class="form-control" asp-for="ProductInput.ImageFile" id="productImage" name="file_edit" accept="image/*" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="productCategory">Product Category</label>
+                        <select class="form-control" asp-for="ProductInput.CategoryId" id="productCategory">
+                            @foreach (var category in Model.AllCategories)
+                            {
+                                <option value="@category.CategoryId">@category.Name</option>
+                            }
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="editProductButton">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script>
+            document.querySelectorAll('.btn-primary[data-bs-toggle="modal"]').forEach(function (button) {
+                    button.addEventListener('click', function () {
+                        var productId = button.getAttribute('data-product-id');
+                        document.querySelector('#editProductId').value = productId;
+                        document.querySelector('#editProductModalLabel').textContent = 'Edit Product - ID: ' + productId;
+                    });
+                });
+        $('#addCategoryButton').click(function () {
+            $('#formAddProduct').submit();
+        });
+        
+        $('#editProductButton').click(function () {
+                   $('#formEditProduct').submit();
+                });
+    </script>
+}
