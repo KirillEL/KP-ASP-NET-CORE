@@ -74,6 +74,40 @@ using (var scope = app.Services.CreateScope())
         context.Users.Add(admin);
         context.SaveChanges();
     }
+    var tvExists = context.Categories.FirstOrDefault(c => c.Name == "Телевизоры");
+    if (tvExists == null)
+    {
+        var tv = new Category
+        {
+            Name = "Телевизоры",
+            Description = "Телевизоры кайф"
+        };
+        context.Categories.Add(tv);
+        context.SaveChanges();
+    }
+    var smartphoneExists = context.Categories.FirstOrDefault(c => c.Name == "Смартфоны");
+    if (smartphoneExists == null)
+    {
+        var smt = new Category
+        {
+            Name = "Смартфоны",
+            Description = "Смартфоны топ1"
+        };
+        context.Categories.Add(smt);
+        context.SaveChanges();
+    }
+    var laptops = context.Categories.FirstOrDefault(c => c.Name == "Ноутбуки");
+    if (laptops == null)
+    {
+        var laptop = new Category
+        {
+            Name = "Ноутбуки",
+            Description = "Ноутбуки мощь!"
+        };
+        context.Categories.Add(laptop);
+        context.SaveChanges();
+    }
+
 }
 
 app.Run();
